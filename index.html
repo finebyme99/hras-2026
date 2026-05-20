@@ -221,7 +221,7 @@
   .panel[data-track="b"] .metric.hi{background:rgba(255,94,138,.08);color:var(--accent-c)}
 
   /* ───────────── Timeline ───────────── */
-  .timeline{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:8px}
+  .timeline{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:8px}
   @media (max-width:960px){.timeline{grid-template-columns:1fr;gap:18px}}
   .tl-rail{position:absolute;top:42px;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent-a),var(--accent-b));opacity:.25}
   @media (max-width:960px){.tl-rail{display:none}}
@@ -419,6 +419,7 @@
   <div class="nav-links">
     <a href="#tracks">参赛说明</a>
     <a href="#timeline">赛事时间</a>
+    <a href="#wish">许愿池</a>
     <a href="#process">评审机制</a>
     <a href="#awards">参赛激励</a>
     <a href="#toolkit">工具包</a>
@@ -603,9 +604,67 @@
 
     <div class="timeline reveal" data-delay="1">
       <div class="tl-rail"></div>
+      <div class="tl-step"><div class="when">随时</div><h4>许愿池提报</h4><p>全员可随时提交工作痛点，组委会筛选后确定下期赛题</p></div>
       <div class="tl-step"><div class="when">每月 1 - 25 日</div><h4>方案提报</h4><p>全员可随时提交参赛方案</p></div>
       <div class="tl-step"><div class="when">每月 26 - 月底</div><h4>组委会评审</h4><p>组委会集中评审当月所有方案</p></div>
       <div class="tl-step"><div class="when">次月 1 日</div><h4>公布结果 + 发放激励</h4><p>公布评审结果，发放奖金 / 实物 / 小红花</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── 许愿池 ─────────── -->
+<section id="wish" class="spotlight" style="padding-top:72px;padding-bottom:72px">
+  <div class="container">
+    <div class="spot-card reveal" style="padding:56px">
+      <div class="spot-mesh">
+        <div class="b b1"></div><div class="b b2"></div><div class="b b3"></div>
+      </div>
+      <div class="spot-grid-bg"></div>
+      <div class="spot-inner" style="grid-template-columns:1fr 1fr;gap:48px">
+        <div class="spot-left">
+          <span class="spot-eyebrow"><span class="dot"></span> WISHING POOL · AI 许愿池</span>
+          <h2 class="spot-title" style="font-size:clamp(30px,3.8vw,48px);margin-top:14px">
+            <span class="line">你来许愿</span>
+            <span class="line g">AI 来实现</span>
+          </h2>
+          <p class="spot-lead" style="margin-top:14px;font-size:15px;line-height:1.7">
+            每个人的日常工作里，都有<strong>反复做、耗时长、易出错</strong>的痛点场景。<br>
+            把它告诉我们 —— 组委会将从许愿中选出<strong>下期 AI 大赛主题</strong>，<br>
+            让 AI 真正解决<strong>你最想解决的问题</strong>。
+          </p>
+          <div class="spot-tagline" style="margin-top:18px">
+            <span class="pill">全员可提</span>
+            <svg width="20" height="12" viewBox="0 0 22 14" fill="none"><path d="M1 7H20M20 7L14 1M20 7L14 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="pill hi">组委会筛选 → 定题 → 全员解题</span>
+          </div>
+          <div class="spot-actions" style="margin-top:22px">
+            <a class="spot-cta" href="https://ztn.feishu.cn/share/base/form/shrcn2OaxMFequUyz2E6VkJFvJg" target="_blank" rel="noopener">
+              <span>写下你的愿望</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8H14M14 8L8 2M14 8L8 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="spot-right">
+          <div class="spot-stat goal">
+            <div class="k">许愿机制</div>
+            <div class="v goal-v">
+              全员提报当前工作痛点场景<span class="u">组委会根据许愿内容确定下期 AI 大赛主题</span>
+            </div>
+          </div>
+          <div class="spot-stat">
+            <div class="k">许愿方向</div>
+            <div class="v" style="font-size:14.5px;line-height:1.6">重复劳动多 · 流程耗时长 · 数据易出错 · 跨部门协作难 · 信息查找慢 …</div>
+          </div>
+          <div class="spot-stat">
+            <div class="k">许愿格式建议</div>
+            <div class="v" style="font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)">「<strong style="color:#fff">我每次做 XX 要花 X 小时</strong>，如果 AI 能帮我 XX 就好了」</div>
+          </div>
+          <div class="spot-stat">
+            <div class="k">你的愿望 = 下期赛题</div>
+            <div class="v" style="font-size:14px;line-height:1.6;color:rgba(255,255,255,.75)">被选中的愿望将<strong style="color:#fff">成为下期大赛指定赛题</strong>，并优先获得 AI 方案支持</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>

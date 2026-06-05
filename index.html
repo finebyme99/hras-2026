@@ -55,7 +55,8 @@
   .gradient-text{background:var(--grad-1);-webkit-background-clip:text;background-clip:text;color:transparent}
 
   /* ───────────── Nav ───────────── */
-  .nav{position:fixed;inset:18px 24px auto 24px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 22px 16px 28px;border-radius:999px;backdrop-filter:saturate(160%) blur(18px);-webkit-backdrop-filter:saturate(160%) blur(18px);background:rgba(255,255,255,.78);border:1px solid var(--line);transition:all .4s ease;box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 8px 28px rgba(10,10,20,.06)}
+  .nav{position:fixed;inset:72px 24px auto 24px;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 22px 16px 28px;border-radius:999px;backdrop-filter:saturate(160%) blur(18px);-webkit-backdrop-filter:saturate(160%) blur(18px);background:rgba(255,255,255,.78);border:1px solid var(--line);transition:all .4s ease;box-shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 8px 28px rgba(10,10,20,.06)}
+  body.banner-closed .nav{inset:18px 24px auto 24px}
   .nav.scrolled{box-shadow:var(--shadow-md);background:rgba(255,255,255,.92)}
   .brand{display:flex;align-items:center;gap:16px;letter-spacing:-.02em;min-width:0}
   .brand .hras-logo{width:auto;height:38px;flex:0 0 auto;display:block;object-fit:contain}
@@ -458,10 +459,10 @@
 
   /* ─────────── 评审机制更新通知 ─────────── */
   .update-banner{
-    position:relative;display:flex;align-items:center;justify-content:center;gap:14px;
+    position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:14px;
     padding:14px 56px 14px 24px;color:#fff;font-size:14.5px;font-weight:500;letter-spacing:.01em;line-height:1.5;
     text-align:center;background:linear-gradient(120deg,#5b5cff 0%,#00d4ff 55%,#ff5e8a 110%);
-    box-shadow:0 6px 24px rgba(91,92,255,.28);overflow:hidden;z-index:5;
+    box-shadow:0 6px 24px rgba(91,92,255,.28);overflow:hidden;z-index:110;
     animation:banner-glow 3.6s ease-in-out infinite;
   }
   .update-banner::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 18% 50%,rgba(255,255,255,.22),transparent 55%);pointer-events:none}
@@ -536,7 +537,7 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
     </span>
   </a>
-  <button class="ub-close" type="button" aria-label="关闭通知" onclick="document.getElementById('update-banner').classList.add('is-hidden')">×</button>
+  <button class="ub-close" type="button" aria-label="关闭通知" onclick="document.getElementById('update-banner').classList.add('is-hidden');document.body.classList.add('banner-closed')">×</button>
 </div>
 
 <!-- ─────────── Nav ─────────── -->

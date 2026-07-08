@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>招聘操作相关指引规则 · HRAS培训</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --zt-blue: #051D49;
+      --zt-orange: #EF7622;
+      --ink: #151A22;
+      --muted: #5A6472;
+      --hairline: #D7DEE8;
+      --soft-blue: #EAF0F8;
+      --soft-orange: #FFF0E7;
+      --paper: #F7F9FC;
+      --white: #FFFFFF;
+      --stage-bg: #E9EEF5;
+      --slide-bg: #F7F9FC;
+      --font-display: "Noto Serif SC", serif;
+      --font-body: "Noto Sans SC", sans-serif;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-normal: 0.55s;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--stage-bg);
+    }
+    body { font-family: var(--font-body); color: var(--ink); }
+    .deck-viewport {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--stage-bg);
+    }
+    .deck-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      transform-origin: 0 0;
+      background: var(--slide-bg);
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+      padding: 72px 86px;
+      background:
+        linear-gradient(90deg, rgba(5,29,73,0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(5,29,73,0.026) 1px, transparent 1px),
+        var(--paper);
+      background-size: 96px 96px;
+    }
+    .slide.active,
+    .slide.visible {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 1;
+    }
+    img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+    .deck-controls {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      z-index: 1000;
+    }
+    @media print {
+      html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+      .deck-viewport { position: static; overflow: visible; background: #fff; }
+      .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+      .slide {
+        position: relative;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 1920px;
+        height: 1080px;
+        break-after: page;
+        page-break-after: always;
+      }
+      .slide:last-child { break-after: auto; page-break-after: auto; }
+      .deck-controls { display: none !important; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+    }
+
+    .topbar {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      top: 54px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(5,29,73,0.18);
+      color: var(--zt-blue);
+      font-size: 18px;
+      letter-spacing: 0.04em;
+    }
+    .hras-logo { display: block; width: auto; height: 32px; object-fit: contain; }
+    .page-no { font-variant-numeric: tabular-nums; color: rgba(5,29,73,0.62); }
+    .slide-title {
+      position: absolute;
+      left: 86px;
+      top: 134px;
+      width: 1500px;
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--zt-orange);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 0.07em;
+      margin-bottom: 22px;
+    }
+    .kicker::before {
+      content: "";
+      width: 54px;
+      height: 4px;
+      background: var(--zt-orange);
+      display: block;
+    }
+    h1, h2, h3 { color: var(--zt-blue); }
+    h1 {
+      font-family: var(--font-display);
+      font-size: 112px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 68px;
+      line-height: 1.14;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    h2.long-title { font-size: 56px; }
+    h3 {
+      font-size: 31px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+    .subtitle {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 30px;
+      line-height: 1.45;
+      max-width: 1120px;
+    }
+    .content {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      top: 340px;
+      bottom: 74px;
+    }
+    .content.flow-focus {
+      top: 286px;
+      bottom: 78px;
+    }
+    .content.image-focus {
+      top: 286px;
+      bottom: 78px;
+    }
+    .content.media-focus {
+      top: 264px;
+      bottom: 92px;
+    }
+    .footnote {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      bottom: 38px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(21,26,34,0.48);
+      font-size: 16px;
+    }
+    .footnote a,
+    .resource-link {
+      color: var(--zt-orange);
+      text-decoration: none;
+      font-weight: 900;
+    }
+    .progress-shell { height: 6px; width: 260px; background: rgba(5,29,73,0.12); overflow: hidden; }
+    .progress-bar { height: 100%; width: 0; background: var(--zt-orange); transition: width 0.28s ease; }
+
+    .reveal, .reveal-left, .reveal-scale {
+      opacity: 0;
+      transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .reveal { transform: translateY(30px); }
+    .reveal-left { transform: translateX(-42px); }
+    .reveal-scale { transform: scale(0.96); }
+    .slide.visible .reveal,
+    .slide.visible .reveal-left,
+    .slide.visible .reveal-scale { opacity: 1; transform: translate(0, 0) scale(1); }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.16s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.32s; }
+
+    .cover-hero { position: absolute; left: 86px; top: 184px; width: 1080px; }
+    .cover h1 { font-size: 116px; max-width: 1120px; }
+    .cover .subtitle { font-size: 34px; max-width: 980px; }
+    .cover-index {
+      position: absolute;
+      right: 92px;
+      top: 170px;
+      width: 580px;
+      border-left: 2px solid rgba(5,29,73,0.2);
+      padding-left: 54px;
+    }
+    .cover-step {
+      min-height: 112px;
+      border-top: 1px solid rgba(5,29,73,0.22);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--zt-blue);
+      font-size: 23px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+    .cover-step::before {
+      content: attr(data-n);
+      width: 56px;
+      height: 56px;
+      flex: 0 0 56px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--zt-orange);
+      color: #fff;
+      font-size: 20px;
+      font-variant-numeric: tabular-nums;
+    }
+    .cover-statement {
+      position: absolute;
+      left: 86px;
+      bottom: 92px;
+      width: 1180px;
+      padding-top: 28px;
+      border-top: 2px solid var(--zt-blue);
+      font-size: 34px;
+      line-height: 1.45;
+      color: var(--zt-blue);
+      font-weight: 900;
+    }
+
+    .section-divider {
+      background:
+        linear-gradient(90deg, rgba(5,29,73,0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(5,29,73,0.032) 1px, transparent 1px),
+        #F7F9FC;
+      background-size: 112px 112px;
+    }
+    .section-lockup {
+      position: absolute;
+      left: 86px;
+      top: 242px;
+      width: 1380px;
+    }
+    .module-number {
+      color: var(--zt-orange);
+      font-size: 148px;
+      line-height: 0.82;
+      font-weight: 900;
+      margin-bottom: 52px;
+      font-variant-numeric: tabular-nums;
+    }
+    .section-divider h2 { max-width: 1380px; font-size: 92px; line-height: 1.08; }
+    .section-divider h2.long-title { font-size: 76px; line-height: 1.14; }
+    .module-stroke {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      bottom: 202px;
+      height: 2px;
+      background: var(--zt-blue);
+    }
+    .module-giant {
+      position: absolute;
+      right: 88px;
+      bottom: 116px;
+      color: rgba(239,118,34,0.12);
+      font-size: 360px;
+      line-height: 0.76;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 44px;
+      height: 620px;
+    }
+    .logic-map {
+      position: relative;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--hairline);
+      padding: 42px;
+    }
+    .logic-row {
+      display: grid;
+      grid-template-columns: 178px 1fr;
+      align-items: stretch;
+      min-height: 98px;
+      border-top: 1px solid var(--hairline);
+    }
+    .logic-row:first-child { border-top: 3px solid var(--zt-blue); }
+    .logic-tag {
+      display: flex;
+      align-items: center;
+      color: var(--zt-orange);
+      font-size: 38px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .logic-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .logic-copy strong { color: var(--zt-blue); font-size: 28px; line-height: 1.24; }
+    .logic-copy span { color: var(--muted); font-size: 19px; line-height: 1.35; margin-top: 7px; }
+    .resource-stack {
+      display: grid;
+      gap: 18px;
+    }
+    .resource-card {
+      background: #fff;
+      border: 1px solid var(--hairline);
+      padding: 28px 30px;
+      min-height: 112px;
+    }
+    .resource-card strong {
+      display: block;
+      color: var(--zt-blue);
+      font-size: 28px;
+      line-height: 1.22;
+      margin-bottom: 12px;
+    }
+    .resource-card span {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+    .visual-split {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 42px;
+      height: 620px;
+      align-items: stretch;
+    }
+    .image-frame {
+      background: #fff;
+      border: 1px solid var(--hairline);
+      padding: 18px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+    .image-frame.flow-wide {
+      position: relative;
+      padding: 24px;
+      height: 100%;
+    }
+    .image-frame.doc-wide {
+      height: 100%;
+      padding: 24px;
+    }
+    .image-frame.doc-wide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .asset-image {
+      width: 100%;
+      height: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .tall-flow .image-frame img {
+      display: block;
+      width: auto !important;
+      height: auto !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      object-fit: contain !important;
+    }
+    .flow-image {
+      width: 100%;
+      height: 100%;
+      background: url("assets/background-check.png") center / contain no-repeat;
+    }
+    .flow-link-pill {
+      position: absolute;
+      right: 30px;
+      bottom: 26px;
+      display: inline-flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 0 18px;
+      background: #fff;
+      border: 1px solid var(--zt-orange);
+      color: var(--zt-orange);
+      text-decoration: none;
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 900;
+    }
+    .module-map {
+      display: grid;
+      gap: 22px;
+      height: 620px;
+    }
+    .module-card {
+      display: grid;
+      grid-template-columns: 128px 1fr;
+      align-items: center;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--hairline);
+      border-left: 5px solid var(--zt-orange);
+      padding: 28px 34px 28px 24px;
+    }
+    .module-card .module-index {
+      color: var(--zt-orange);
+      font-size: 48px;
+      line-height: 1;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .module-card strong {
+      display: block;
+      color: var(--zt-blue);
+      font-size: 34px;
+      line-height: 1.2;
+    }
+    .module-card span {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.38;
+    }
+    .video-stage {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 36px;
+      align-items: stretch;
+    }
+    .video-frame {
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--hairline);
+      padding: 24px;
+      display: grid;
+      place-items: center;
+    }
+    .video-frame video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #fff;
+    }
+    .video-side {
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+    .video-side .resource-card {
+      min-height: 148px;
+    }
+    .note-grid {
+      display: grid;
+      gap: 18px;
+    }
+    .note-card {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--hairline);
+      padding: 26px 28px;
+    }
+    .note-card.accent {
+      background: var(--zt-blue);
+      border-color: var(--zt-blue);
+    }
+    .note-card strong {
+      display: block;
+      color: var(--zt-blue);
+      font-size: 28px;
+      line-height: 1.22;
+      margin-bottom: 12px;
+    }
+    .note-card p { color: var(--muted); font-size: 20px; line-height: 1.42; }
+    .note-card.accent strong,
+    .note-card.accent p { color: #fff; }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      margin-top: 36px;
+      border-top: 3px solid var(--zt-blue);
+      border-left: 1px solid var(--hairline);
+    }
+    .process-step {
+      min-height: 260px;
+      background: rgba(255,255,255,0.76);
+      border-right: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      padding: 34px 26px;
+      position: relative;
+    }
+    .process-step::before {
+      content: attr(data-n);
+      color: var(--zt-orange);
+      font-size: 52px;
+      line-height: 0.9;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .process-step h3 { margin-top: 28px; font-size: 29px; }
+    .process-step p { margin-top: 14px; color: var(--muted); font-size: 19px; line-height: 1.42; }
+    .link-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      margin-top: 36px;
+    }
+    .link-card {
+      display: block;
+      min-height: 170px;
+      background: #fff;
+      border: 1px solid var(--hairline);
+      padding: 28px;
+      text-decoration: none;
+    }
+    .link-card .label {
+      color: var(--zt-orange);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      margin-bottom: 18px;
+    }
+    .link-card strong {
+      display: block;
+      color: var(--zt-blue);
+      font-size: 27px;
+      line-height: 1.25;
+    }
+    .link-card span {
+      display: block;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+    .qa-panel {
+      height: 620px;
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 44px;
+    }
+    .qa-left {
+      background: var(--zt-orange);
+      color: #fff;
+      padding: 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .qa-left .num {
+      font-size: 210px;
+      line-height: 0.82;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .qa-left p {
+      margin-top: 36px;
+      font-size: 34px;
+      line-height: 1.35;
+      font-weight: 900;
+    }
+    .qa-list {
+      display: grid;
+      gap: 20px;
+    }
+    .qa-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      align-items: center;
+      min-height: 116px;
+      background: #fff;
+      border: 1px solid var(--hairline);
+      padding-right: 32px;
+    }
+    .qa-item .mark {
+      color: var(--zt-orange);
+      font-size: 30px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+    }
+    .qa-item strong {
+      display: block;
+      color: var(--zt-blue);
+      font-size: 26px;
+      line-height: 1.25;
+    }
+    .qa-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.35;
+      margin-top: 7px;
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage">
+
+      <section class="slide cover active">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">01 / 15</div></div>
+        <div class="cover-hero">
+          <div class="kicker reveal-left">招聘操作相关指引规则</div>
+          <h1 class="reveal d1" data-editable>招聘操作相关指引规则</h1>
+          <p class="subtitle reveal d2" data-editable>把分散的招聘操作规则、SOP、模板与工具统一成一张可查、可用、可复盘的操作地图。</p>
+        </div>
+        <div class="cover-index reveal d3">
+          <div class="cover-step" data-n="01">编制分类标准介绍</div>
+          <div class="cover-step" data-n="02">定薪环节标准化操作</div>
+          <div class="cover-step" data-n="03">全球招聘规则</div>
+          <div class="cover-step" data-n="04">招聘岗考核方案（薪点制）</div>
+          <div class="cover-step" data-n="05">AI招聘工具介绍与提问答疑</div>
+        </div>
+        <div class="cover-statement reveal d4" data-editable>主线不是记住每份制度的位置，而是知道不同招聘场景该引用哪份规则、哪份模板、哪条 SOP。</div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">02 / 15</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">01</div>
+          <h2 class="reveal d1" data-editable>编制分类标准介绍</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">01</div>
+        <div class="footnote"><span>招聘操作相关指引规则</span><span>02</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">03 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">01 编制分类标准介绍</div>
+          <h2 class="reveal d1" data-editable>ABC 分类先判断岗位影响力，再看干部岗与专业岗口径。</h2>
+        </div>
+        <div class="content">
+          <div class="visual-split">
+            <div class="image-frame reveal-scale d2">
+              <img src="assets/compile-classification.png" alt="纵腾集团编制ABC分类标准">
+            </div>
+            <div class="note-grid reveal d3">
+              <div class="note-card"><strong>A类</strong><p>对 BU / 条线经营绩效及战略目标有重大影响力的核心岗位，占比不超过 5%。</p></div>
+              <div class="note-card"><strong>B类</strong><p>对下设一级部门经营绩效及战略目标有重要影响力的重要岗位，占比不超过 15%。</p></div>
+              <div class="note-card"><strong>C类</strong><p>除 A、B 之外的正常招聘岗位，占比不低于 80%。</p></div>
+              <div class="note-card accent"><strong>使用口径</strong><p>AB 类比例及职级要求作为指导线，特殊情况需由 HRBP 负责人、BU / 条线负责人审定。</p></div>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>素材：纵腾集团编制ABC分类标准</span><span>03</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">04 / 15</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">02</div>
+          <h2 class="reveal d1" data-editable>定薪环节标准化操作</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">02</div>
+        <div class="footnote"><span>招聘操作相关指引规则</span><span>04</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">05 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">02 定薪环节标准化操作</div>
+          <h2 class="reveal d1" data-editable>定薪不是单点判断，而是“流水、白名单、模板、背调、规则”的组合判断。</h2>
+        </div>
+        <div class="content">
+          <div class="process-grid reveal d2">
+            <div class="process-step" data-n="01"><h3>薪资流水收集</h3><p>用于核实工作履历，并作为定薪参考输入。</p></div>
+            <div class="process-step" data-n="02"><h3>白名单判断</h3><p>识别无需或需简化流水收集的标准场景。</p></div>
+            <div class="process-step" data-n="03"><h3>薪酬建议表</h3><p>把候选人信息、定薪输入和建议结果结构化。</p></div>
+            <div class="process-step" data-n="04"><h3>背调开展</h3><p>围绕候选人履历与入职风险形成背调结果。</p></div>
+            <div class="process-step" data-n="05"><h3>招聘定薪规则</h3><p>把流水与背调信息放回定薪规则中判断。</p></div>
+          </div>
+          <div class="link-list reveal d3">
+            <a class="link-card" href="https://ztn.feishu.cn/wiki/BRgBwbfT4itfIbkHODvcLwpNnOb" target="_blank" rel="noopener"><div class="label">SOP</div><strong>候选人薪资流水收集SOP</strong><span>薪资流水收集操作指引</span></a>
+            <a class="link-card" href="https://ztn.feishu.cn/wiki/XN2ZwzHs4iUMwnkjr5nc2JFlnKg" target="_blank" rel="noopener"><div class="label">SOP</div><strong>入职履历背调指引SOP</strong><span>背调开展与结果承接</span></a>
+            <a class="link-card" href="https://ztn.feishu.cn/wiki/PeTEwKfYJipCTykbIAQcusxvnue" target="_blank" rel="noopener"><div class="label">RULE</div><strong>招聘定薪规则</strong><span>定薪判断的正式规则入口</span></a>
+          </div>
+        </div>
+        <div class="footnote"><span>定薪环节：薪资流水收集 / 背调开展 / 招聘定薪规则</span><span>05</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">06 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">02 定薪环节标准化操作</div>
+          <h2 class="reveal d1" data-editable>薪资流水收集先判断白名单场景。</h2>
+        </div>
+        <div class="content image-focus">
+          <div class="image-frame doc-wide reveal-scale d2">
+            <div class="asset-image" style="background-image: url('assets/salary-white-list.png')" role="img" aria-label="薪资流水收集白名单"></div>
+          </div>
+        </div>
+        <div class="footnote"><span>素材：薪资流水收集白名单V2.1_20260421</span><span>06</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">07 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">02 定薪环节标准化操作</div>
+          <h2 class="reveal d1" data-editable>薪酬建议表把定薪输入与建议结果结构化。</h2>
+        </div>
+        <div class="content image-focus">
+          <div class="image-frame doc-wide reveal-scale d2">
+            <div class="asset-image" style="background-image: url('assets/salary-template.png')" role="img" aria-label="薪酬建议表模版"></div>
+          </div>
+        </div>
+        <div class="footnote"><span>素材：薪酬建议表模版</span><span>07</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">08 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">02 定薪环节标准化操作</div>
+          <h2 class="reveal d1" data-editable>背调流程要分清 HRBP 与 HSSC 的动作边界。</h2>
+        </div>
+        <div class="content flow-focus">
+          <div class="image-frame flow-wide reveal-scale d2">
+              <div class="flow-image" role="img" aria-label="候选人入职背调流程图"></div>
+              <a class="flow-link-pill" href="https://ztn.feishu.cn/wiki/XN2ZwzHs4iUMwnkjr5nc2JFlnKg" target="_blank" rel="noopener">打开：候选人入职背调SOP</a>
+          </div>
+        </div>
+        <div class="footnote"><span>HRBP 发起与确认，HSSC 承接收集、调研与报告输出，审核结果回到入职与定薪判断。</span><span>08</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">09 / 15</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">03</div>
+          <h2 class="reveal d1" data-editable>全球招聘规则</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">03</div>
+        <div class="footnote"><span>招聘操作相关指引规则</span><span>09</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">10 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">03 全球招聘规则</div>
+          <h2 class="reveal d1" data-editable>跨区域招聘事项，先回到全球规则统一口径。</h2>
+        </div>
+        <div class="content">
+          <div class="overview-grid">
+            <div class="module-map reveal d2">
+              <div class="module-card"><div class="module-index">01</div><div><strong>招聘奖金</strong><span>先回到全球规则确认适用范围、奖励触发口径与审批要求。</span></div></div>
+              <div class="module-card"><div class="module-index">02</div><div><strong>内推奖金</strong><span>涉及推荐关系、奖金发放条件或跨区域差异时，统一按规则文件判断。</span></div></div>
+              <div class="module-card"><div class="module-index">03</div><div><strong>二次入职</strong><span>复聘、离职再入职等场景，按全球招聘规则核对限制条件与例外处理。</span></div></div>
+            </div>
+            <div class="resource-stack reveal d3">
+              <a class="link-card" href="https://ztn.feishu.cn/wiki/KlTMw8HMmifNZUk5XMQcA4nPnzb" target="_blank" rel="noopener"><div class="label">GLOBAL RULES</div><strong>纵腾集团全球招聘规则</strong><span>2026 年版 V2 · PPTX</span></a>
+              <a class="link-card" href="https://ztn.feishu.cn/wiki/QdBGwQcbpilBzzkPqkHcRL8VnBc#DqI3d3Cdho3zP3xhDPtcYdehnph" target="_blank" rel="noopener"><div class="label">SOURCE</div><strong>招聘操作相关指引规则</strong><span>回到源文档查看上下文</span></a>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>全球招聘规则：统一口径、版本与问题归属</span><span>10</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">11 / 15</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">04</div>
+          <h2 class="reveal d1" data-editable>招聘岗考核方案（薪点制）</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">04</div>
+        <div class="footnote"><span>招聘操作相关指引规则</span><span>11</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">12 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">04 招聘岗考核方案（薪点制）</div>
+          <h2 class="reveal d1" data-editable>招聘岗考核看方案文件，不用口头复述替代制度口径。</h2>
+        </div>
+        <div class="content">
+          <div class="overview-grid">
+            <div class="logic-map reveal d2">
+              <div class="logic-row"><div class="logic-tag">A</div><div class="logic-copy"><strong>对象</strong><span>先确认方案适用的招聘岗位与考核对象。</span></div></div>
+              <div class="logic-row"><div class="logic-tag">B</div><div class="logic-copy"><strong>指标</strong><span>对照方案理解薪点制下的指标口径和计量方式。</span></div></div>
+              <div class="logic-row"><div class="logic-tag">C</div><div class="logic-copy"><strong>结果</strong><span>需要解释考核结果时，回到方案原文核对。</span></div></div>
+            </div>
+            <div class="resource-stack reveal d3">
+              <a class="link-card" href="https://ztn.feishu.cn/wiki/GkCywtJM2iMBI9ktXz4cf5xmnwd" target="_blank" rel="noopener"><div class="label">ASSESSMENT</div><strong>招聘薪点制方案</strong><span>2026-05-13 · PPTX</span></a>
+              <div class="resource-card"><strong>使用原则</strong><span>涉及考核口径、解释争议和结果应用时，以正式方案文件为唯一依据。</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>招聘岗考核方案：对象、指标、结果</span><span>12</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">13 / 15</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">05</div>
+          <h2 class="reveal d1 long-title" data-editable>AI招聘工具介绍<br>与提问答疑</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">05</div>
+        <div class="footnote"><span>招聘操作相关指引规则</span><span>13</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">14 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">05 AI招聘工具介绍</div>
+          <h2 class="reveal d1" data-editable>北森AI寻聘助手演示</h2>
+        </div>
+        <div class="content media-focus">
+          <div class="video-stage">
+            <div class="video-frame reveal-scale d2">
+              <video controls preload="metadata" poster="assets/video/beisen-ai-poster.png">
+                <source src="assets/video/beisen-ai-demo.mp4" type="video/mp4">
+              </video>
+            </div>
+            <div class="video-side reveal d3">
+              <div class="resource-card"><strong>演示内容</strong><span>基于原文档视频素材，展示北森 AI 寻聘助手的寻访任务配置与操作界面。</span></div>
+              <div class="resource-card"><strong>播放方式</strong><span>点击视频控件播放；首帧已作为预览界面，离线打开本页也能看到画面。</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>素材：原文档 AI 招聘工具介绍 mp4</span><span>14</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"><div class="page-no">15 / 15</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">05 AI招聘工具介绍与提问答疑</div>
+          <h2 class="reveal d1" data-editable>最后收束成一张“资源怎么找、问题怎么问”的清单。</h2>
+        </div>
+        <div class="content">
+          <div class="qa-panel">
+            <div class="qa-left reveal d2">
+              <div class="num">5</div>
+              <p>类资源入口：分类、定薪、规则、考核、工具。</p>
+            </div>
+            <div class="qa-list reveal d3">
+              <div class="qa-item"><div class="mark">✓</div><div><strong>先找规则</strong><span>制度、规则和 SOP 已明确的，不用凭经验重新解释。</span></div></div>
+              <div class="qa-item"><div class="mark">✓</div><div><strong>再看场景</strong><span>编制分类、定薪、背调、全球规则、考核分别对应不同问题入口。</span></div></div>
+              <div class="qa-item"><div class="mark">✓</div><div><strong>明确版本</strong><span>涉及 PPTX / SOP / 视频素材时，使用源文档中的最新有效材料。</span></div></div>
+              <div class="qa-item"><div class="mark">✓</div><div><strong>保留问题</strong><span>规则未覆盖、口径不一致或场景例外，进入提问答疑与后续补充。</span></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>AI招聘工具视频素材见源文档 · 提问答疑作为后续补充入口</span><span>15</span></div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="deck-controls"><div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div></div>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        const params = new URLSearchParams(window.location.search);
+        const requestedSlide = params.get('slide') || window.location.hash.replace('#', '');
+        const requestedIndex = requestedSlide ? Number(requestedSlide) - 1 : NaN;
+        this.currentSlide = Number.isFinite(requestedIndex)
+          ? requestedIndex
+          : Number(localStorage.getItem('recruiting-guidelines-slide') || 0);
+        this.stage = document.getElementById('deckStage');
+        this.progressBar = document.getElementById('progressBar');
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.showSlide(this.currentSlide);
+      }
+      setupStageScale() {
+        const scale = () => {
+          const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+          const x = (window.innerWidth - 1920 * factor) / 2;
+          const y = (window.innerHeight - 1080 * factor) / 2;
+          this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+      }
+      setupKeyboardNav() {
+        document.addEventListener('keydown', (event) => {
+          if (['ArrowRight', 'PageDown', ' '].includes(event.key)) {
+            event.preventDefault();
+            this.next();
+          }
+          if (['ArrowLeft', 'PageUp'].includes(event.key)) {
+            event.preventDefault();
+            this.prev();
+          }
+          if (event.key === 'Home') this.showSlide(0);
+          if (event.key === 'End') this.showSlide(this.slides.length - 1);
+        });
+      }
+      setupTouchNav() {
+        let startX = 0;
+        let startY = 0;
+        document.addEventListener('touchstart', (event) => {
+          startX = event.changedTouches[0].screenX;
+          startY = event.changedTouches[0].screenY;
+        }, { passive: true });
+        document.addEventListener('touchend', (event) => {
+          const dx = event.changedTouches[0].screenX - startX;
+          const dy = event.changedTouches[0].screenY - startY;
+          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+            dx < 0 ? this.next() : this.prev();
+          }
+        }, { passive: true });
+      }
+      setupWheelNav() {
+        let last = 0;
+        document.addEventListener('wheel', (event) => {
+          const now = Date.now();
+          if (now - last < 700 || Math.abs(event.deltaY) < 20) return;
+          last = now;
+          event.deltaY > 0 ? this.next() : this.prev();
+        }, { passive: true });
+      }
+      showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === this.currentSlide);
+          slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        localStorage.setItem('recruiting-guidelines-slide', String(this.currentSlide));
+        this.progressBar.style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+      }
+      next() { this.showSlide(this.currentSlide + 1); }
+      prev() { this.showSlide(this.currentSlide - 1); }
+    }
+    new SlidePresentation();
+  </script>
+</body>
+</html>

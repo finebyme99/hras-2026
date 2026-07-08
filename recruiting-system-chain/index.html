@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>招聘系统全链路 · HRAS培训</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ===========================================
+       CSS CUSTOM PROPERTIES (THEME)
+       =========================================== */
+    :root {
+      --zt-blue: #051D49;
+      --zt-orange: #EF7622;
+      --ink: #151A22;
+      --muted: #5A6472;
+      --hairline: #D7DEE8;
+      --soft-blue: #EAF0F8;
+      --soft-orange: #FFF0E7;
+      --paper: #F7F9FC;
+      --white: #FFFFFF;
+      --stage-bg: #E9EEF5;
+      --slide-bg: #F7F9FC;
+      --font-display: "Noto Serif SC", serif;
+      --font-body: "Noto Sans SC", sans-serif;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-normal: 0.55s;
+    }
+
+    /* ===========================================
+       BASE RESET
+       =========================================== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===========================================
+       FIXED 16:9 STAGE: MANDATORY BASE STYLES
+       Include this ENTIRE file in every presentation.
+       Slides are authored at 1920×1080 and scaled as a whole.
+       =========================================== */
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--stage-bg, #000);
+    }
+    .deck-viewport {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        background: var(--stage-bg, #000);
+    }
+    .deck-stage {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        transform-origin: 0 0;
+        background: var(--slide-bg, #fff);
+    }
+    .slide {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        display: block;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        background: var(--slide-bg, #fff);
+    }
+    .slide.active,
+    .slide.visible {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        z-index: 1;
+    }
+    img,
+    video,
+    canvas,
+    svg {
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .deck-controls {
+        position: fixed;
+        left: 50%;
+        bottom: 22px;
+        transform: translateX(-50%);
+        z-index: 1000;
+    }
+    @media print {
+        html,
+        body {
+            width: 1920px;
+            height: auto;
+            overflow: visible;
+            background: #fff;
+        }
+        .deck-viewport {
+            position: static;
+            overflow: visible;
+            background: #fff;
+        }
+        .deck-stage {
+            position: static;
+            width: auto;
+            height: auto;
+            transform: none !important;
+            background: none;
+        }
+        .slide {
+            position: relative;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            width: 1920px;
+            height: 1080px;
+            break-after: page;
+            page-break-after: always;
+        }
+        .slide:last-child {
+            break-after: auto;
+            page-break-after: auto;
+        }
+        .deck-controls {
+            display: none !important;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            transition-duration: 0.2s !important;
+        }
+    }
+
+    /* ===========================================
+       PRESENTATION CHROME
+       =========================================== */
+    body { font-family: var(--font-body); color: var(--ink); }
+    .slide {
+      padding: 72px 86px;
+      background:
+        linear-gradient(90deg, rgba(5,29,73,0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(5,29,73,0.026) 1px, transparent 1px),
+        var(--paper);
+      background-size: 96px 96px;
+    }
+    .topbar {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      top: 54px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(5,29,73,0.18);
+      color: var(--zt-blue);
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      font-weight: 900;
+    }
+    .hras-logo {
+      display: block;
+      width: auto;
+      height: 32px;
+      object-fit: contain;
+    }
+    .page-no {
+      font-variant-numeric: tabular-nums;
+      color: rgba(5,29,73,0.62);
+    }
+    .slide-title {
+      position: absolute;
+      left: 86px;
+      top: 134px;
+      width: 1480px;
+    }
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--zt-orange);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+    .kicker::before {
+      content: "";
+      width: 54px;
+      height: 4px;
+      background: var(--zt-orange);
+      display: block;
+    }
+    h1, h2, h3 { color: var(--zt-blue); }
+    h1 {
+      font-family: var(--font-display);
+      font-size: 108px;
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 64px;
+      line-height: 1.14;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+    h2.compact-heading {
+      font-size: 52px;
+      line-height: 1.16;
+    }
+    .heading-tail {
+      font-size: 0.84em;
+    }
+    h3 {
+      font-size: 31px;
+      line-height: 1.25;
+      font-weight: 900;
+    }
+    .subtitle {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 30px;
+      line-height: 1.45;
+      max-width: 1180px;
+    }
+    .section-lede {
+      margin-top: 18px;
+      max-width: 1220px;
+      color: var(--muted);
+      font-size: 28px;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+    .content {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      top: 340px;
+      bottom: 74px;
+    }
+    .footnote {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      bottom: 38px;
+      display: flex;
+      justify-content: space-between;
+      color: rgba(21,26,34,0.48);
+      font-size: 16px;
+    }
+    .footnote a {
+      color: var(--zt-orange);
+      text-decoration: none;
+      font-weight: 900;
+    }
+    .accent { color: var(--zt-orange); }
+    .blue { color: var(--zt-blue); }
+    .muted { color: var(--muted); }
+
+    /* ===========================================
+       ANIMATIONS
+       =========================================== */
+    .reveal, .reveal-left, .reveal-scale {
+      opacity: 0;
+      transition:
+        opacity var(--duration-normal) var(--ease-out-expo),
+        transform var(--duration-normal) var(--ease-out-expo);
+    }
+    .reveal { transform: translateY(30px); }
+    .reveal-left { transform: translateX(-42px); }
+    .reveal-scale { transform: scale(0.96); }
+    .slide.visible .reveal,
+    .slide.visible .reveal-left,
+    .slide.visible .reveal-scale {
+      opacity: 1;
+      transform: translate(0, 0) scale(1);
+    }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.16s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.32s; }
+    .d5 { transition-delay: 0.40s; }
+
+    /* ===========================================
+       REUSABLE COMPONENTS
+       =========================================== */
+    .consult-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 2px solid var(--zt-blue);
+      border-left: 1px solid var(--hairline);
+    }
+    .consult-cell {
+      min-height: 320px;
+      padding: 42px 38px;
+      border-right: 1px solid var(--hairline);
+      border-bottom: 1px solid var(--hairline);
+      background: rgba(255,255,255,0.68);
+    }
+    .big-index {
+      font-size: 88px;
+      line-height: 0.9;
+      font-weight: 900;
+      color: var(--zt-orange);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 34px;
+    }
+    .body-copy {
+      font-size: 25px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .caption {
+      font-size: 18px;
+      color: rgba(21,26,34,0.54);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .rule {
+      height: 2px;
+      background: var(--zt-blue);
+      width: 100%;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      background: var(--soft-orange);
+      color: var(--zt-orange);
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 0.06em;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 4px;
+      background: var(--zt-blue);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .tag.orange { background: var(--zt-orange); }
+    .panel {
+      background: rgba(255,255,255,0.76);
+      border: 1px solid var(--hairline);
+    }
+
+    /* ===========================================
+       SLIDE 1 COVER
+       =========================================== */
+    .cover {
+      background:
+        linear-gradient(90deg, rgba(5,29,73,0.055) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(5,29,73,0.035) 1px, transparent 1px),
+        #F8FAFD;
+      background-size: 120px 120px;
+    }
+    .cover-hero {
+      position: absolute;
+      left: 86px;
+      top: 185px;
+      width: 1100px;
+    }
+    .cover h1 { font-size: 126px; max-width: 1060px; }
+    .cover .subtitle { font-size: 36px; max-width: 920px; }
+    .cover-bars {
+      position: absolute;
+      right: 92px;
+      top: 176px;
+      width: 560px;
+      height: 690px;
+      border-left: 2px solid rgba(5,29,73,0.2);
+      padding-left: 54px;
+    }
+    .cover-step {
+      position: relative;
+      min-height: 142px;
+      border-top: 1px solid rgba(5,29,73,0.22);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--zt-blue);
+      font-size: 24px;
+      line-height: 1.28;
+      font-weight: 900;
+    }
+    .cover-step::before {
+      content: attr(data-n);
+      width: 58px;
+      height: 58px;
+      flex: 0 0 58px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--zt-orange);
+      color: #fff;
+      font-size: 21px;
+      font-variant-numeric: tabular-nums;
+    }
+    .cover-statement {
+      position: absolute;
+      left: 86px;
+      bottom: 92px;
+      width: 1190px;
+      padding-top: 28px;
+      border-top: 2px solid var(--zt-blue);
+      font-size: 34px;
+      line-height: 1.45;
+      color: var(--zt-blue);
+      font-weight: 900;
+    }
+
+    /* ===========================================
+       SECTION DIVIDER
+       =========================================== */
+    .section-divider {
+      background:
+        linear-gradient(90deg, rgba(5,29,73,0.045) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(5,29,73,0.032) 1px, transparent 1px),
+        #F7F9FC;
+      background-size: 112px 112px;
+    }
+    .section-lockup {
+      position: absolute;
+      left: 86px;
+      top: 250px;
+      width: 1320px;
+    }
+    .module-number {
+      color: var(--zt-orange);
+      font-size: 158px;
+      line-height: 0.82;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 54px;
+    }
+    .section-divider h2 {
+      max-width: 1320px;
+      font-size: 96px;
+      line-height: 1.08;
+    }
+    .section-divider h2.long-title {
+      font-size: 76px;
+      line-height: 1.14;
+    }
+    .module-stroke {
+      position: absolute;
+      left: 86px;
+      right: 86px;
+      bottom: 202px;
+      height: 2px;
+      background: var(--zt-blue);
+    }
+    .module-giant {
+      position: absolute;
+      right: 88px;
+      bottom: 116px;
+      color: rgba(239,118,34,0.12);
+      font-size: 360px;
+      line-height: 0.76;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      pointer-events: none;
+    }
+
+    /* ===========================================
+       SLIDE 3 SYSTEM MAP
+       =========================================== */
+    .system-map {
+      position: relative;
+      height: 650px;
+    }
+    .map-node {
+      position: absolute;
+      min-width: 190px;
+      min-height: 72px;
+      padding: 17px 20px;
+      background: var(--white);
+      border: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .map-node strong {
+      font-size: 26px;
+      line-height: 1.2;
+      color: var(--zt-blue);
+      font-weight: 900;
+    }
+    .map-node span {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.35;
+    }
+    .map-node.root {
+      width: 300px;
+      height: 138px;
+      left: 0;
+      top: 238px;
+      background: var(--zt-blue);
+      border-color: var(--zt-blue);
+    }
+    .map-node.root strong,
+    .map-node.root span { color: #fff; }
+    .map-node.domain {
+      width: 200px;
+      background: var(--soft-blue);
+      border-color: rgba(5,29,73,0.24);
+    }
+    .map-node.system {
+      width: 308px;
+    }
+    .map-node.wide { width: 520px; }
+    .map-line {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .map-line path {
+      fill: none;
+      stroke: var(--zt-blue);
+      stroke-width: 3;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      opacity: 0.82;
+    }
+    .map-line .orange-line { stroke: var(--zt-orange); }
+
+    /* ===========================================
+       MATRIX / TABLE
+       =========================================== */
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: rgba(255,255,255,0.74);
+      border-top: 3px solid var(--zt-blue);
+    }
+    .matrix th {
+      text-align: left;
+      color: var(--zt-blue);
+      font-size: 20px;
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--zt-blue);
+      font-weight: 900;
+    }
+    .matrix td {
+      vertical-align: top;
+      padding: 24px 22px;
+      border-bottom: 1px solid var(--hairline);
+      border-right: 1px solid var(--hairline);
+      font-size: 22px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .matrix td:first-child {
+      color: var(--zt-blue);
+      font-weight: 900;
+      font-size: 23px;
+    }
+    .matrix td:last-child { border-right: none; }
+
+    /* ===========================================
+       CHAIN VISUAL
+       =========================================== */
+    .chain {
+      position: relative;
+      height: 440px;
+      margin-top: 20px;
+    }
+    .chain-line {
+      position: absolute;
+      left: 80px;
+      right: 80px;
+      top: 214px;
+      height: 8px;
+      background: var(--zt-orange);
+    }
+    .chain-item {
+      position: absolute;
+      top: 110px;
+      width: 230px;
+      height: 220px;
+      padding: 28px 24px;
+      background: var(--white);
+      border: 1px solid var(--hairline);
+    }
+    .chain-item::before {
+      content: attr(data-n);
+      position: absolute;
+      top: -28px;
+      left: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--zt-blue);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .chain-item h3 {
+      margin-top: 18px;
+      font-size: 29px;
+    }
+    .chain-item p {
+      margin-top: 16px;
+      font-size: 20px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .chain-item.emphasis {
+      border-color: var(--zt-orange);
+      background: var(--soft-orange);
+    }
+
+    /* ===========================================
+       SWIMLANE
+       =========================================== */
+    .swimlane {
+      position: relative;
+      height: 610px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid var(--zt-blue);
+    }
+    .lane {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 203px;
+      border-bottom: 1px solid rgba(5,29,73,0.45);
+    }
+    .lane:last-child { border-bottom: none; }
+    .lane-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 130px;
+      height: 100%;
+      border-right: 1px solid rgba(5,29,73,0.45);
+      display: grid;
+      place-items: center;
+      color: var(--zt-blue);
+      font-size: 30px;
+      font-weight: 900;
+    }
+    .flow-box {
+      position: absolute;
+      min-width: 176px;
+      height: 86px;
+      padding: 16px 18px;
+      background: var(--white);
+      border: 2px solid var(--zt-blue);
+      color: var(--zt-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 19px;
+      line-height: 1.28;
+      font-weight: 900;
+    }
+    .flow-box.start,
+    .flow-box.end {
+      border-radius: 999px;
+      background: var(--soft-blue);
+    }
+    .flow-box.orange {
+      border-color: var(--zt-orange);
+      background: var(--soft-orange);
+    }
+    .flow-box.small { min-width: 150px; }
+    .flow-lines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .flow-lines path {
+      fill: none;
+      stroke: var(--zt-blue);
+      stroke-width: 4;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+    }
+    .flow-lines .orange-line { stroke: var(--zt-orange); }
+
+    /* ===========================================
+       DATA THREAD / DECISION TREE
+       =========================================== */
+    .data-thread {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 54px;
+      height: 620px;
+    }
+    .thread-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .thread-row {
+      display: grid;
+      grid-template-columns: 94px 1fr;
+      align-items: stretch;
+      min-height: 78px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--hairline);
+    }
+    .thread-row .num {
+      display: grid;
+      place-items: center;
+      background: var(--zt-blue);
+      color: #fff;
+      font-weight: 900;
+      font-size: 28px;
+      font-variant-numeric: tabular-nums;
+    }
+    .thread-row.orange .num { background: var(--zt-orange); }
+    .thread-row .txt {
+      padding: 14px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .thread-row strong { color: var(--zt-blue); font-size: 25px; line-height: 1.2; }
+    .thread-row span { color: var(--muted); font-size: 18px; line-height: 1.35; margin-top: 7px; }
+    .risk-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    .risk-card {
+      padding: 28px;
+      background: var(--white);
+      border: 1px solid var(--hairline);
+      min-height: 188px;
+    }
+    .risk-card strong {
+      display: block;
+      color: var(--zt-blue);
+      font-size: 27px;
+      margin-bottom: 18px;
+    }
+    .risk-card p {
+      font-size: 20px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .decision {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 46px;
+      height: 610px;
+    }
+    .question-stack {
+      border-top: 3px solid var(--zt-blue);
+      background: rgba(255,255,255,0.76);
+    }
+    .question {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      min-height: 132px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .question .qnum {
+      display: grid;
+      place-items: center;
+      color: var(--zt-orange);
+      font-size: 42px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+    .question .qcopy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-right: 30px;
+    }
+    .question strong { font-size: 28px; color: var(--zt-blue); line-height: 1.25; }
+    .question span { font-size: 18px; color: var(--muted); margin-top: 8px; line-height: 1.35; }
+    .classify {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .class-card {
+      padding: 32px 32px 28px;
+      background: var(--white);
+      border: 1px solid var(--hairline);
+    }
+    .class-card h3 { font-size: 31px; margin-bottom: 16px; }
+    .class-card p { font-size: 20px; color: var(--muted); line-height: 1.45; }
+    .class-card.highlight {
+      background: var(--zt-blue);
+      border-color: var(--zt-blue);
+    }
+    .class-card.highlight h3,
+    .class-card.highlight p { color: #fff; }
+
+    /* ===========================================
+       CASE / CLOSING
+       =========================================== */
+    .goal-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      background: rgba(255,255,255,0.76);
+      border-top: 3px solid var(--zt-blue);
+    }
+    .goal-table th {
+      padding: 24px 24px;
+      text-align: left;
+      color: var(--zt-blue);
+      font-size: 24px;
+      font-weight: 900;
+      border-bottom: 1px solid var(--zt-blue);
+      border-right: 1px solid var(--hairline);
+    }
+    .goal-table td {
+      vertical-align: top;
+      padding: 34px 24px;
+      color: var(--muted);
+      font-size: 26px;
+      line-height: 1.45;
+      border-bottom: 1px solid var(--hairline);
+      border-right: 1px solid var(--hairline);
+    }
+    .goal-table td:first-child {
+      color: var(--zt-blue);
+      font-size: 32px;
+      font-weight: 900;
+    }
+    .goal-table th:last-child,
+    .goal-table td:last-child { border-right: none; }
+    .reflection-list {
+      display: grid;
+      gap: 28px;
+      width: 100%;
+      max-width: 1460px;
+      margin-top: 18px;
+    }
+    .reflection-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      min-height: 132px;
+      align-items: center;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--hairline);
+      padding: 26px 38px 26px 0;
+    }
+    .reflection-box {
+      width: 34px;
+      height: 34px;
+      justify-self: center;
+      border: 3px solid var(--zt-blue);
+      border-radius: 6px;
+      background: var(--paper);
+    }
+    .reflection-item p {
+      color: var(--zt-blue);
+      font-size: 34px;
+      line-height: 1.38;
+      font-weight: 900;
+    }
+    .case-board {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 46px;
+      height: 610px;
+    }
+    .case-prompt {
+      padding: 48px;
+      background: var(--zt-blue);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .case-prompt h3 { color: #fff; font-size: 44px; }
+    .case-prompt p { font-size: 29px; line-height: 1.55; color: rgba(255,255,255,0.86); }
+    .case-steps {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+    .case-step {
+      padding: 30px;
+      background: var(--white);
+      border: 1px solid var(--hairline);
+    }
+    .case-step b {
+      color: var(--zt-orange);
+      font-size: 20px;
+      letter-spacing: 0.08em;
+    }
+    .case-step strong {
+      display: block;
+      margin-top: 12px;
+      color: var(--zt-blue);
+      font-size: 29px;
+      line-height: 1.2;
+    }
+    .case-step p {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 20px;
+      line-height: 1.45;
+    }
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 58px;
+      height: 610px;
+      align-items: stretch;
+    }
+    .closing-number {
+      background: var(--zt-orange);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 54px;
+    }
+    .closing-number .num {
+      font-size: 240px;
+      line-height: 0.82;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.04em;
+    }
+    .closing-number .label {
+      margin-top: 34px;
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+    .close-checks {
+      display: grid;
+      gap: 20px;
+    }
+    .check-row {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      align-items: center;
+      min-height: 118px;
+      background: var(--white);
+      border: 1px solid var(--hairline);
+      padding-right: 34px;
+    }
+    .check-row .mark {
+      display: grid;
+      place-items: center;
+      color: var(--zt-orange);
+      font-size: 34px;
+      font-weight: 900;
+    }
+    .check-row strong {
+      color: var(--zt-blue);
+      font-size: 28px;
+      line-height: 1.25;
+    }
+    .check-row span {
+      display: block;
+      color: var(--muted);
+      font-size: 18px;
+      margin-top: 7px;
+      line-height: 1.35;
+    }
+
+    /* ===========================================
+       CONTROLS AND EDIT MODE
+       =========================================== */
+    .progress-shell {
+      height: 6px;
+      width: 260px;
+      background: rgba(5,29,73,0.12);
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: var(--zt-orange);
+      transition: width 0.28s ease;
+    }
+    .edit-hotzone {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 80px;
+      z-index: 10000;
+      cursor: pointer;
+    }
+    .edit-toggle {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 10001;
+      border: none;
+      background: var(--zt-blue);
+      color: #fff;
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      font-weight: 900;
+    }
+    .edit-toggle.show,
+    .edit-toggle.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    [contenteditable="true"] {
+      outline: 2px dashed rgba(239,118,34,0.55);
+      outline-offset: 4px;
+      cursor: text;
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage">
+
+      <section class="slide cover active">
+        <div class="topbar">
+          <div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div>
+          <div class="page-no">01 / 10</div>
+        </div>
+        <div class="cover-hero">
+          <div class="kicker reveal-left">招聘系统全链路</div>
+          <h1 class="reveal d1" data-editable>招聘系统全链路</h1>
+          <p class="subtitle reveal d2" data-editable>围绕招聘系统全链路，建立系统全景、理解“一码贯穿”流程，并掌握常见卡点的定位方法。</p>
+        </div>
+        <div class="cover-bars reveal d3">
+          <div class="cover-step" data-n="01">目标</div>
+          <div class="cover-step" data-n="02">全球人力系统全貌概览</div>
+          <div class="cover-step" data-n="03">国内/海外招聘系统“一码贯穿”全流程（从招聘需求到offer入职）</div>
+          <div class="cover-step" data-n="04">收敛与验证</div>
+        </div>
+        <div class="cover-statement reveal d4" data-editable>主线不是“如何点按钮”，而是“编制、需求、候选人、Offer、入职数据如何在多系统之间贯穿”。</div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">02 / 10</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">01</div>
+          <h2 class="reveal d1" data-editable>目标</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">01</div>
+        <div class="footnote"><span>招聘系统全链路</span><span>02</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">03 / 10</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">01 目标</div>
+          <h2 class="reveal d1" data-editable>看清系统全貌，走通招聘链路，定位常见卡点。</h2>
+        </div>
+        <div class="content">
+          <div class="consult-grid">
+            <div class="consult-cell reveal d1">
+              <div class="big-index">01</div>
+              <h3 data-editable>看全景</h3>
+              <p class="body-copy" data-editable>知道全球人力相关系统如何分工，先建立人力域、非人力域、人员管理、编制预算、流程运行之间的边界。</p>
+            </div>
+            <div class="consult-cell reveal d2">
+              <div class="big-index">02</div>
+              <h3 data-editable>走链路</h3>
+              <p class="body-copy" data-editable>能复述从招聘需求到入职后的主流程，用“一码贯穿”解释数据如何衔接。</p>
+            </div>
+            <div class="consult-cell reveal d3">
+              <div class="big-index">03</div>
+              <h3 data-editable>会排障</h3>
+              <p class="body-copy" data-editable>遇到问题先判断卡点位置和责任系统，区分权限、数据、流程、规则和产品缺陷。</p>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>招聘系统全链路（谦）</span><span>03</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">04 / 10</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">02</div>
+          <h2 class="reveal d1" data-editable>全球人力系统全貌概览</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">02</div>
+        <div class="footnote"><span>招聘系统全链路</span><span>04</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">05 / 10</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">02 全球人力系统全貌概览</div>
+          <h2 class="reveal d1" data-editable>系统版图：按职能分层，而不是按入口菜单。</h2>
+        </div>
+        <div class="content">
+          <div class="system-map reveal-scale d2">
+            <svg class="map-line" viewBox="0 0 1748 650" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M300 307 H398 V155 H520"/>
+              <path d="M398 307 V480 H520"/>
+              <path d="M720 155 H812 V64 H872"/>
+              <path d="M720 155 H812 V150 H872"/>
+              <path d="M720 155 H812 V236 H872"/>
+              <path d="M720 155 H812 V322 H872"/>
+              <path class="orange-line" d="M720 155 H812 V408 H872"/>
+              <path d="M720 480 H812 V500 H872"/>
+              <path d="M720 480 H812 V590 H872"/>
+            </svg>
+            <div class="map-node root"><strong>全球人力<br/>相关系统</strong><span>招聘链路的外部地图</span></div>
+            <div class="map-node domain" style="left:520px;top:112px;"><strong>人力域</strong><span>人员与编制预算</span></div>
+            <div class="map-node domain" style="left:520px;top:438px;"><strong>非人力域</strong><span>流程与协作</span></div>
+            <div class="map-node system" style="left:872px;top:28px;"><strong>EHR · 外采</strong><span>国内员工管理；员工端流程</span></div>
+            <div class="map-node system" style="left:872px;top:114px;"><strong>东宝 LBU · 外采</strong><span>LBU 国内外包工；员工之家流程</span></div>
+            <div class="map-node system" style="left:872px;top:200px;"><strong>OEHR · 自研</strong><span>海外正式工管理；自助流程</span></div>
+            <div class="map-node system" style="left:872px;top:286px;"><strong>OTWS · 自研</strong><span>海外外包工管理</span></div>
+            <div class="map-node wide" style="left:872px;top:372px;"><strong>HRMS · 自研</strong><span>全球编制、海外需求、海外 Offer、集团人力预算</span></div>
+            <div class="map-node system" style="left:872px;top:464px;"><strong>OA</strong><span>集团各类业务流程、人力流程</span></div>
+            <div class="map-node system" style="left:872px;top:554px;"><strong>飞书 / Lark</strong><span>全员办公协作</span></div>
+          </div>
+        </div>
+        <div class="footnote"><span>人力域 / 非人力域 · 人员管理 / 编制预算 / 流程协作</span><span>05</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">06 / 10</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">03</div>
+          <h2 class="reveal d1 long-title" data-editable>国内/海外招聘系统<br>“一码贯穿”全流程<br><span class="heading-tail">（从招聘需求到offer入职）</span></h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">03</div>
+        <div class="footnote"><span>招聘系统全链路</span><span>06</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">07 / 10</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">03 国内/海外招聘系统“一码贯穿”全流程</div>
+          <h2 class="reveal d1 compact-heading" data-editable>流程图：Offer 审批、发送与待入职承接。</h2>
+        </div>
+        <div class="content">
+          <div class="swimlane reveal-scale d2">
+            <div class="lane" style="top:0;"><div class="lane-label">HRMS</div></div>
+            <div class="lane" style="top:203px;"><div class="lane-label">OEHR</div></div>
+            <div class="lane" style="top:406px;"><div class="lane-label">EHR</div></div>
+            <svg class="flow-lines" viewBox="0 0 1748 610" preserveAspectRatio="none" aria-hidden="true">
+              <defs>
+                <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L0,6 L8,3 z" fill="#051D49"></path>
+                </marker>
+                <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                  <path d="M0,0 L0,6 L8,3 z" fill="#EF7622"></path>
+                </marker>
+              </defs>
+              <path d="M325 102 H448" marker-end="url(#arrowHead)"/>
+              <path d="M625 102 H690 V62 H802" marker-end="url(#arrowHead)"/>
+              <path class="orange-line" d="M625 102 H692 V505 H802" marker-end="url(#arrowOrange)"/>
+              <path d="M1010 62 H1190 V270 H1258" marker-end="url(#arrowHead)"/>
+              <path d="M1398 270 H1510 V102 H1558" marker-end="url(#arrowHead)"/>
+              <path class="orange-line" d="M980 505 H1106" marker-end="url(#arrowOrange)"/>
+              <path class="orange-line" d="M1285 505 H1435" marker-end="url(#arrowOrange)"/>
+              <path class="orange-line" d="M1585 505 V102 H1558" marker-end="url(#arrowOrange)"/>
+            </svg>
+            <div class="flow-box start" style="left:170px;top:59px;">1 新建 / 确认<br/>可用编制</div>
+            <div class="flow-box" style="left:448px;top:59px;">2 HRMS 招聘管理<br/>新建需求</div>
+            <div class="flow-box" style="left:802px;top:19px;">3 海外 Offer<br/>新建与审批</div>
+            <div class="flow-box" style="left:1258px;top:226px;">4 自动生成<br/>待入职</div>
+            <div class="flow-box start" style="left:1558px;top:59px;">5 / 6 入职后<br/>关联编制编号</div>
+            <div class="flow-box orange" style="left:802px;top:462px;">3 EHR 应聘者页<br/>发起 Offer 审批</div>
+            <div class="flow-box orange" style="left:1106px;top:462px;">4 EHR 应聘者页<br/>发送 Offer</div>
+            <div class="flow-box orange" style="left:1435px;top:462px;">5 EHR 入职管理<br/>生成待入职</div>
+            <div class="tag" style="position:absolute;left:670px;top:32px;">海外编制</div>
+            <div class="tag orange" style="position:absolute;left:675px;top:430px;">国内编制</div>
+            <div class="caption" style="position:absolute;left:1190px;top:40px;">Offer 审批通过</div>
+            <div class="caption" style="position:absolute;left:1288px;top:438px;">候选人接受 Offer</div>
+          </div>
+        </div>
+        <div class="footnote"><span>HRMS / OEHR / EHR 三泳道：国内与海外路径分叉；<a href="https://ztn.feishu.cn/wiki/XgxBwe4pUisfamkahlFc6wRHnbc" target="_blank" rel="noopener">附：系统操作SOP《“一码贯穿”EHR招聘操作SOP【招聘BP】》</a></span><span>07</span></div>
+      </section>
+
+      <section class="slide section-divider">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">08 / 10</div></div>
+        <div class="section-lockup">
+          <div class="module-number reveal-left">04</div>
+          <h2 class="reveal d1" data-editable>收敛与验证</h2>
+        </div>
+        <div class="module-stroke reveal d2"></div>
+        <div class="module-giant reveal d3">04</div>
+        <div class="footnote"><span>招聘系统全链路</span><span>08</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">09 / 10</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">04 收敛与验证</div>
+          <h2 class="reveal d1" data-editable>4.1 目标达成自查</h2>
+        </div>
+        <div class="content reveal d2">
+          <table class="goal-table">
+            <thead>
+              <tr>
+                <th style="width: 210px;">目标</th>
+                <th style="width: 560px;">要学会</th>
+                <th>重点</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>看全景</td>
+                <td>知道全球人力相关系统如何分工</td>
+                <td>人力域、非人力域、人员管理、编制预算、流程运行之间的边界</td>
+              </tr>
+              <tr>
+                <td>走链路</td>
+                <td>能复述从招聘需求到入职后的主流程</td>
+                <td>用“一码贯穿”解释编制、需求、候选人、Offer、入职数据如何衔接</td>
+              </tr>
+              <tr>
+                <td>会排障</td>
+                <td>遇到问题先判断卡点位置和责任系统</td>
+                <td>区分权限问题、数据问题、流程问题、规则问题和产品缺陷</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="footnote"><span>目标达成自查：看全景、走链路、会排障</span><span>09</span></div>
+      </section>
+
+      <section class="slide">
+        <div class="topbar"><div class="brand-mark"><img class="hras-logo" src="assets/hras-logo-current.png" alt="HRAS"></div><div class="page-no">10 / 10</div></div>
+        <div class="slide-title">
+          <div class="kicker reveal-left">04 收敛与验证</div>
+          <h2 class="reveal d1" data-editable>4.2 拓展思考</h2>
+        </div>
+        <div class="content">
+          <div class="reflection-list reveal d2">
+            <div class="reflection-item">
+              <div class="reflection-box"></div>
+              <p data-editable>为啥要分这么多套系统？</p>
+            </div>
+            <div class="reflection-item">
+              <div class="reflection-box"></div>
+              <p data-editable>以编制作为起点的业务背景是啥？</p>
+            </div>
+            <div class="reflection-item">
+              <div class="reflection-box"></div>
+              <p data-editable>一个卡点案例：候选人已接受 Offer 但未生成待入职，判断可能原因和排查顺序</p>
+            </div>
+          </div>
+        </div>
+        <div class="footnote"><span>拓展思考：系统边界、编制起点、卡点排查</span><span>10</span></div>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="deck-controls" aria-hidden="false">
+    <div class="progress-shell"><div class="progress-bar" id="progressBar"></div></div>
+  </div>
+  <div class="edit-hotzone"></div>
+  <button class="edit-toggle" id="editToggle" title="Edit mode (E)">E</button>
+
+  <script>
+    /* ===========================================
+       SLIDE PRESENTATION CONTROLLER
+       =========================================== */
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll('.slide'));
+        const params = new URLSearchParams(window.location.search);
+        const requestedSlide = params.get('slide') || window.location.hash.replace('#', '');
+        const requestedIndex = requestedSlide ? Number(requestedSlide) - 1 : NaN;
+        this.currentSlide = Number.isFinite(requestedIndex)
+          ? requestedIndex
+          : Number(localStorage.getItem('recruiting-chain-slide') || 0);
+        this.stage = document.getElementById('deckStage');
+        this.progressBar = document.getElementById('progressBar');
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.showSlide(this.currentSlide);
+      }
+
+      setupStageScale() {
+        const scale = () => {
+          const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+          const x = (window.innerWidth - 1920 * factor) / 2;
+          const y = (window.innerHeight - 1080 * factor) / 2;
+          this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+      }
+
+      setupKeyboardNav() {
+        document.addEventListener('keydown', (event) => {
+          if (event.target && event.target.getAttribute('contenteditable') === 'true') return;
+          if (['ArrowRight', 'PageDown', ' '].includes(event.key)) {
+            event.preventDefault();
+            this.next();
+          }
+          if (['ArrowLeft', 'PageUp'].includes(event.key)) {
+            event.preventDefault();
+            this.prev();
+          }
+          if (event.key === 'Home') this.showSlide(0);
+          if (event.key === 'End') this.showSlide(this.slides.length - 1);
+        });
+      }
+
+      setupTouchNav() {
+        let startX = 0;
+        let startY = 0;
+        document.addEventListener('touchstart', (event) => {
+          startX = event.changedTouches[0].screenX;
+          startY = event.changedTouches[0].screenY;
+        }, { passive: true });
+        document.addEventListener('touchend', (event) => {
+          const dx = event.changedTouches[0].screenX - startX;
+          const dy = event.changedTouches[0].screenY - startY;
+          if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+            dx < 0 ? this.next() : this.prev();
+          }
+        }, { passive: true });
+      }
+
+      setupWheelNav() {
+        let last = 0;
+        document.addEventListener('wheel', (event) => {
+          const now = Date.now();
+          if (now - last < 700 || Math.abs(event.deltaY) < 20) return;
+          last = now;
+          event.deltaY > 0 ? this.next() : this.prev();
+        }, { passive: true });
+      }
+
+      showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+          slide.classList.toggle('active', i === this.currentSlide);
+          slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        localStorage.setItem('recruiting-chain-slide', String(this.currentSlide));
+        this.progressBar.style.width = `${((this.currentSlide + 1) / this.slides.length) * 100}%`;
+      }
+
+      next() { this.showSlide(this.currentSlide + 1); }
+      prev() { this.showSlide(this.currentSlide - 1); }
+    }
+
+    /* ===========================================
+       INLINE TEXT EDITOR
+       =========================================== */
+    class InlineEditor {
+      constructor() {
+        this.isActive = false;
+        this.editables = Array.from(document.querySelectorAll('[data-editable]'));
+        this.storageKey = 'recruiting-chain-edits-v1';
+        this.restore();
+      }
+
+      toggleEditMode() {
+        this.isActive = !this.isActive;
+        document.getElementById('editToggle').classList.toggle('active', this.isActive);
+        this.editables.forEach((element) => {
+          element.setAttribute('contenteditable', this.isActive ? 'true' : 'false');
+        });
+        if (!this.isActive) this.save();
+      }
+
+      save() {
+        const payload = this.editables.map((element) => element.innerHTML);
+        localStorage.setItem(this.storageKey, JSON.stringify(payload));
+      }
+
+      restore() {
+        try {
+          const payload = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+          payload.forEach((html, index) => {
+            if (this.editables[index]) this.editables[index].innerHTML = html;
+          });
+        } catch (error) {
+          console.warn('Could not restore edits', error);
+        }
+      }
+    }
+
+    const presentation = new SlidePresentation();
+    const editor = new InlineEditor();
+
+    const hotzone = document.querySelector('.edit-hotzone');
+    const editToggle = document.getElementById('editToggle');
+    let hideTimeout = null;
+    hotzone.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimeout);
+      editToggle.classList.add('show');
+    });
+    hotzone.addEventListener('mouseleave', () => {
+      hideTimeout = setTimeout(() => {
+        if (!editor.isActive) editToggle.classList.remove('show');
+      }, 400);
+    });
+    editToggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    editToggle.addEventListener('mouseleave', () => {
+      hideTimeout = setTimeout(() => {
+        if (!editor.isActive) editToggle.classList.remove('show');
+      }, 400);
+    });
+    editToggle.addEventListener('click', () => editor.toggleEditMode());
+    hotzone.addEventListener('click', () => editor.toggleEditMode());
+    document.addEventListener('keydown', (event) => {
+      if ((event.key === 'e' || event.key === 'E') && (!event.target || event.target.getAttribute('contenteditable') !== 'true')) {
+        editor.toggleEditMode();
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') {
+        event.preventDefault();
+        editor.save();
+      }
+    });
+  </script>
+</body>
+</html>

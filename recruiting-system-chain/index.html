@@ -554,6 +554,53 @@
       opacity: 0.82;
     }
     .map-line .orange-line { stroke: var(--zt-orange); }
+    .map-line .fusion-line {
+      stroke: var(--zt-orange);
+      stroke-width: 4;
+      stroke-dasharray: 12 12;
+      opacity: 0.9;
+      animation: dashFlow 1.6s linear infinite;
+    }
+    .map-node.future {
+      width: 292px;
+      min-height: 164px;
+      background: var(--zt-blue);
+      border: 2px solid var(--zt-orange);
+      box-shadow: 0 22px 58px rgba(5,29,73,0.16);
+      animation: futurePulse 2.8s ease-in-out infinite;
+    }
+    .map-node.future strong {
+      color: #fff;
+      font-size: 42px;
+      letter-spacing: 0.02em;
+    }
+    .map-node.future span {
+      color: rgba(255,255,255,0.86);
+      font-size: 19px;
+    }
+    .fusion-badge {
+      position: absolute;
+      left: 1446px;
+      top: 136px;
+      height: 34px;
+      padding: 0 13px;
+      display: inline-flex;
+      align-items: center;
+      background: var(--soft-orange);
+      border: 1px solid rgba(239,118,34,0.42);
+      color: var(--zt-orange);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+    @keyframes dashFlow {
+      from { stroke-dashoffset: 0; }
+      to { stroke-dashoffset: -48; }
+    }
+    @keyframes futurePulse {
+      0%, 100% { transform: translateY(0); box-shadow: 0 22px 58px rgba(5,29,73,0.16); }
+      50% { transform: translateY(-6px); box-shadow: 0 28px 68px rgba(239,118,34,0.18); }
+    }
 
     /* ===========================================
        MATRIX / TABLE
@@ -1141,6 +1188,9 @@
               <path class="orange-line" d="M720 155 H812 V408 H872"/>
               <path d="M720 480 H812 V500 H872"/>
               <path d="M720 480 H812 V590 H872"/>
+              <path class="fusion-line" d="M1180 64 C1288 64 1328 236 1446 236"/>
+              <path class="fusion-line" d="M1180 236 C1288 236 1328 236 1446 236"/>
+              <path class="fusion-line" d="M1392 408 C1418 408 1418 290 1446 290"/>
             </svg>
             <div class="map-node root"><strong>全球人力<br/>相关系统</strong><span>招聘链路的外部地图</span></div>
             <div class="map-node domain" style="left:520px;top:112px;"><strong>人力域</strong><span>人员与编制预算</span></div>
@@ -1152,9 +1202,11 @@
             <div class="map-node wide" style="left:872px;top:372px;"><strong>HRMS · 自研</strong><span>全球编制、海外需求、海外 Offer、集团人力预算</span></div>
             <div class="map-node system" style="left:872px;top:464px;"><strong>OA</strong><span>集团各类业务流程、人力流程</span></div>
             <div class="map-node system" style="left:872px;top:554px;"><strong>飞书 / Lark</strong><span>全员办公协作</span></div>
+            <div class="fusion-badge">未来融合</div>
+            <div class="map-node future" style="left:1446px;top:204px;"><strong>HRONE</strong><span>EHR / OEHR / HRMS 未来融合为统一人力系统入口</span></div>
           </div>
         </div>
-        <div class="footnote"><span>人力域 / 非人力域 · 人员管理 / 编制预算 / 流程协作</span><span>05</span></div>
+        <div class="footnote"><span>人力域 / 非人力域 · EHR、OEHR、HRMS 未来融合为 HRONE</span><span>05</span></div>
       </section>
 
       <section class="slide section-divider">
